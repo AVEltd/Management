@@ -1,0 +1,553 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Customer Journey: A 5-Pillar Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F8F0F8;
+            color: #332266;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .pillar-slide {
+            min-height: calc(100vh - 120px); /* Adjust based on header/footer height */
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem;
+            box-sizing: border-box;
+        }
+        .pillar-slide.active {
+            display: flex;
+        }
+        .chart-container {
+            position: relative;
+            margin-left: auto;
+            margin-right: auto;
+            height: 320px;
+            width: 100%;
+            max-width: 450px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 380px;
+            }
+        }
+        .funnel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+        .funnel-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            height: 60px;
+            clip-path: polygon(10% 0, 90% 0, 100% 100%, 0% 100%);
+            margin-bottom: -1px;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <header class="bg-white py-4 px-4 shadow-md sticky top-0 z-10">
+        <div class="max-w-5xl mx-auto flex flex-col md:flex-row justify-between items-center">
+            <h1 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-gradient-to-r from-[#00A1E4] to-[#A40E63]">The Customer Journey</h1>
+            <nav class="mt-4 md:mt-0 flex space-x-2 md:space-x-4">
+                <button id="prevPillar" class="bg-[#332266] text-white py-1 px-3 rounded-md hover:bg-opacity-80 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">Previous</button>
+                <div id="pillarIndicators" class="flex space-x-2"></div>
+                <button id="nextPillar" class="bg-[#332266] text-white py-1 px-3 rounded-md hover:bg-opacity-80 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed">Next</button>
+            </nav>
+        </div>
+    </header>
+
+    <main class="py-8 px-4 flex-grow">
+        <div class="max-w-5xl mx-auto h-full">
+
+            <section id="intro-slide" class="pillar-slide active bg-white rounded-2xl shadow-lg text-center">
+                <h2 class="text-4xl md:text-5xl font-black mb-4 text-[#332266]">Understanding Your Customer's Path</h2>
+                <p class="text-lg leading-relaxed max-w-3xl mx-auto">
+                    A customer journey map is a visual representation of the process a customer goes through when interacting with your company. It helps businesses understand customer needs, pain points, and motivations at each stage, leading to improved customer experience and business outcomes.
+                </p>
+                <p class="mt-8 text-xl font-semibold text-[#A40E63]">Click 'Next' to explore the 5 Pillars of the Customer Journey.</p>
+            </section>
+
+            <section id="awareness" class="pillar-slide bg-white rounded-2xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-4xl">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-1 text-[#00A1E4]">Pillar 1: Awareness</h3>
+                        <p class="text-lg font-semibold mb-4">Realizing a need and discovering solutions.</p>
+                        <p class="mb-6">In this initial stage, potential customers identify a problem and begin searching for answers. Your brand's visibility across various channels is crucial. Content marketing, SEO, and social media presence help capture attention and build initial trust.</p>
+                        <div class="space-y-3">
+                             <p class="flex items-center"><span class="text-xl mr-3">🔍</span><strong>Search Engines:</strong> High-ranking content answers user queries.</p>
+                             <p class="flex items-center"><span class="text-xl mr-3">📱</span><strong>Social Media:</strong> Engaging posts and ads build community.</p>
+                             <p class="flex items-center"><span class="text-xl mr-3">🗣️</span><strong>Word-of-Mouth:</strong> Referrals from trusted sources drive interest.</p>
+                        </div>
+                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h4 class="text-xl font-semibold text-[#332266] mb-3">Generate Content Ideas ✨</h4>
+                            <textarea id="awarenessInput" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-[#00A1E4] focus:outline-none" rows="2" placeholder="e.g., 'sustainable fashion challenges' or 'benefits of cloud computing'"></textarea>
+                            <button id="generateAwarenessContent" class="mt-3 w-full bg-[#00A1E4] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-200">Generate Ideas</button>
+                            <textarea id="awarenessOutput" class="w-full p-2 border rounded-md mt-3 bg-gray-100" rows="4" readonly placeholder="Generated content ideas will appear here..."></textarea>
+                        </div>
+                    </div>
+                    <div>
+                         <div class="chart-container">
+                            <canvas id="awarenessChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="consideration" class="pillar-slide bg-white rounded-2xl shadow-lg">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-4xl">
+                    <div class="order-2 md:order-1">
+                        <div class="chart-container">
+                            <canvas id="considerationChart"></canvas>
+                        </div>
+                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h4 class="text-xl font-semibold text-[#332266] mb-3">Highlight Differentiators ✨</h4>
+                            <textarea id="considerationInput" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-[#A40E63] focus:outline-none" rows="2" placeholder="e.g., 'Competitor X has lower price' or 'Customers need faster delivery'"></textarea>
+                            <button id="generateConsiderationDifferentiator" class="mt-3 w-full bg-[#A40E63] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-200">Suggest Differentiators</button>
+                            <textarea id="considerationOutput" class="w-full p-2 border rounded-md mt-3 bg-gray-100" rows="4" readonly placeholder="Suggested differentiators will appear here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <h3 class="text-3xl font-bold mb-1 text-[#A40E63]">Pillar 2: Consideration</h3>
+                        <p class="text-lg font-semibold mb-4">Evaluating options to find the best fit.</p>
+                        <p>Customers now actively compare solutions. They visit websites, read reviews, and consume detailed content like case studies and webinars. Your goal is to provide clear, compelling information that highlights your unique value and builds confidence, making it easy for them to see your offering as the superior choice.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="purchase" class="pillar-slide bg-white rounded-2xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-4xl">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-1 text-[#FBB437]">Pillar 3: Purchase</h3>
+                        <p class="text-lg font-semibold mb-4">Making the decision and completing the transaction.</p>
+                        <p>This is the critical moment of conversion. A seamless, secure, and straightforward purchasing process is essential. From the checkout page to the confirmation email, every step should be frictionless to prevent last-minute abandonment and start the customer relationship on a positive note.</p>
+                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h4 class="text-xl font-semibold text-[#332266] mb-3">Optimize CTA Text ✨</h4>
+                            <textarea id="purchaseInput" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-[#FBB437] focus:outline-none" rows="2" placeholder="e.g., 'Product: Premium Software, Goal: Increase sign-ups'"></textarea>
+                            <button id="generatePurchaseCTA" class="mt-3 w-full bg-[#FBB437] text-[#332266] py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-200">Generate CTA</button>
+                            <textarea id="purchaseOutput" class="w-full p-2 border rounded-md mt-3 bg-gray-100" rows="4" readonly placeholder="Suggested CTA text will appear here..."></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="funnel">
+                            <div class="funnel-stage" style="background-color: #00A1E4; width: 90%;">Site Visitors (100%)</div>
+                            <div class="funnel-stage" style="background-color: #5C8FDE; width: 65%;">Added to Cart (65%)</div>
+                            <div class="funnel-stage" style="background-color: #A40E63; width: 40%;">Completed Purchase (40%)</div>
+                        </div>
+                         <p class="text-center font-bold mt-4">This funnel shows a 40% conversion rate from visitor to customer.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="retention" class="pillar-slide bg-white rounded-2xl shadow-lg">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-4xl">
+                     <div class="order-2 md:order-1">
+                        <div class="chart-container">
+                            <canvas id="retentionChart"></canvas>
+                        </div>
+                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h4 class="text-xl font-semibold text-[#332266] mb-3">Suggest Support Response ✨</h4>
+                            <textarea id="retentionInput" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-[#A40E63] focus:outline-none" rows="2" placeholder="e.g., 'Customer's product is not connecting to Wi-Fi'"></textarea>
+                            <button id="generateRetentionResponse" class="mt-3 w-full bg-[#A40E63] text-white py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-200">Generate Response</button>
+                            <textarea id="retentionOutput" class="w-full p-2 border rounded-md mt-3 bg-gray-100" rows="4" readonly placeholder="Suggested support response will appear here..."></textarea>
+                        </div>
+                    </div>
+                    <div class="order-1 md:order-2">
+                        <h3 class="text-3xl font-bold mb-1 text-[#00A1E4]">Pillar 4: Retention</h3>
+                        <p class="text-lg font-semibold mb-4">Using the product and achieving desired outcomes.</p>
+                        <p>The journey doesn't end at purchase. A positive post-purchase experience is key to long-term loyalty. This includes effective onboarding, proactive customer support, and regular communication. By helping customers succeed, you build a foundation for repeat business and reduce churn.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section id="advocacy" class="pillar-slide bg-white rounded-2xl shadow-lg">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center w-full max-w-4xl">
+                    <div>
+                        <h3 class="text-3xl font-bold mb-1 text-[#A40E63]">Pillar 5: Advocacy</h3>
+                        <p class="text-lg font-semibold mb-4">Becoming a loyal fan and promoting the brand.</p>
+                        <p>The ultimate goal is to turn satisfied customers into vocal advocates. Loyal customers not only make repeat purchases but also refer new business and leave positive reviews. Nurturing this stage through loyalty programs and community building creates a powerful, self-sustaining growth engine.</p>
+                        <div class="mt-8 p-4 bg-gray-50 rounded-lg border border-gray-200">
+                            <h4 class="text-xl font-semibold text-[#332266] mb-3">Draft Review Response ✨</h4>
+                            <textarea id="advocacyInput" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-[#FBB437] focus:outline-none" rows="2" placeholder="e.g., 'The product is great, but support was slow.' or 'Absolutely love this service!'"></textarea>
+                            <button id="generateAdvocacyResponse" class="mt-3 w-full bg-[#FBB437] text-[#332266] py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-200">Draft Response</button>
+                            <textarea id="advocacyOutput" class="w-full p-2 border rounded-md mt-3 bg-gray-100" rows="4" readonly placeholder="Drafted review response will appear here..."></textarea>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="chart-container">
+                            <canvas id="advocacyChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <footer class="bg-[#332266] text-white mt-8 py-4 px-4">
+        <div class="max-w-5xl mx-auto text-center">
+            <p class="font-semibold">By systematically mapping the customer journey, you gain invaluable insights that drive strategic decisions, improve customer satisfaction, and ultimately foster long-term business growth.</p>
+        </div>
+    </footer>
+
+    <script>
+        const brilliantBluesPalette = {
+            primary: '#00A1E4',
+            secondary: '#A40E63',
+            accent: '#FBB437',
+            dark: '#332266',
+            light: '#F8F0F8',
+            gradient: '#5C8FDE',
+        };
+
+        const defaultChartOptions = {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top',
+                    labels: {
+                        font: {
+                            family: "'Inter', sans-serif",
+                            size: 12
+                        },
+                        color: brilliantBluesPalette.dark
+                    }
+                },
+                tooltip: {
+                    callbacks: {
+                        title: function(tooltipItems) {
+                            const item = tooltipItems[0];
+                            let label = item.chart.data.labels[item.dataIndex];
+                            if (Array.isArray(label)) {
+                              return label.join(' ');
+                            }
+                            return label;
+                        }
+                    }
+                }
+            },
+            scales: {
+                y: {
+                    ticks: { color: brilliantBluesPalette.dark, font: { family: "'Inter', sans-serif" } },
+                    grid: { color: 'rgba(51, 34, 102, 0.1)' }
+                },
+                x: {
+                    ticks: { color: brilliantBluesPalette.dark, font: { family: "'Inter', sans-serif" } },
+                    grid: { display: false }
+                }
+            }
+        };
+
+        function wrapLabel(str, maxLen) {
+            if (str.length <= maxLen) return str;
+            const words = str.split(' ');
+            let currentLine = '';
+            const lines = [];
+            for (const word of words) {
+                if ((currentLine + word).length > maxLen) {
+                    lines.push(currentLine.trim());
+                    currentLine = '';
+                }
+                currentLine += word + ' ';
+            }
+            lines.push(currentLine.trim());
+            return lines;
+        }
+
+        function createAwarenessChart() {
+            const ctx = document.getElementById('awarenessChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Organic Search', 'Social Media', 'Referrals', 'Paid Ads'],
+                    datasets: [{
+                        label: 'Traffic Source',
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            brilliantBluesPalette.primary,
+                            brilliantBluesPalette.secondary,
+                            brilliantBluesPalette.accent,
+                            brilliantBluesPalette.gradient,
+                        ],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 4,
+                    }]
+                },
+                options: { ...defaultChartOptions, scales: { y: { display: false }, x: { display: false } } }
+            });
+        }
+        
+        function createConsiderationChart() {
+            const ctx = document.getElementById('considerationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Product Features', 'Pricing & Value', 'Customer Reviews', 'Support Quality'],
+                    datasets: [{
+                        label: 'Importance Score',
+                        data: [88, 82, 91, 75],
+                        backgroundColor: brilliantBluesPalette.secondary,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    ...defaultChartOptions,
+                    indexAxis: 'y',
+                    plugins: { ...defaultChartOptions.plugins, legend: { display: false } }
+                }
+            });
+        }
+        
+        function createRetentionChart() {
+            const ctx = document.getElementById('retentionChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Customer Satisfaction (CSAT)',
+                        data: [82, 85, 84, 88, 90, 92],
+                        fill: true,
+                        backgroundColor: 'rgba(0, 161, 228, 0.2)',
+                        borderColor: brilliantBluesPalette.primary,
+                        tension: 0.4
+                    }]
+                },
+                options: { ...defaultChartOptions, plugins: { ...defaultChartOptions.plugins, legend: { display: false } } }
+            });
+        }
+
+        function createAdvocacyChart() {
+            const ctx = document.getElementById('advocacyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Promoters (9-10)', 'Passives (7-8)', 'Detractors (0-6)'],
+                    datasets: [{
+                        label: 'NPS Breakdown',
+                        data: [55, 30, 15],
+                        backgroundColor: [
+                            brilliantBluesPalette.primary,
+                            brilliantBluesPalette.accent,
+                            brilliantBluesPalette.secondary,
+                        ],
+                        borderColor: '#FFFFFF',
+                        borderWidth: 4
+                    }]
+                },
+                options: { ...defaultChartOptions, scales: { y: { display: false }, x: { display: false } } }
+            });
+        }
+
+        async function callGeminiAPI(prompt) {
+            let chatHistory = [];
+            chatHistory.push({ role: "user", parts: [{ text: prompt }] });
+            const payload = { contents: chatHistory };
+            const apiKey = "";
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error("Gemini API error response:", response.status, errorText);
+                    return `Error: API call failed with status ${response.status}. Details: ${errorText.substring(0, 100)}...`;
+                }
+
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0 &&
+                    result.candidates[0].content && result.candidates[0].content.parts &&
+                    result.candidates[0].content.parts.length > 0) {
+                    return result.candidates[0].content.parts[0].text;
+                } else {
+                    console.error("Gemini API response structure unexpected:", result);
+                    return "Error: Could not parse AI response. Please try again.";
+                }
+            } catch (error) {
+                console.error("Error calling Gemini API:", error);
+                return "Error: Failed to connect or process AI response. Please check your network and try again.";
+            }
+        }
+
+        document.getElementById('generateAwarenessContent').addEventListener('click', async () => {
+            const input = document.getElementById('awarenessInput').value;
+            const output = document.getElementById('awarenessOutput');
+            const button = document.getElementById('generateAwarenessContent');
+            if (!input.trim()) {
+                output.value = "Please enter a topic or keyword.";
+                return;
+            }
+            button.disabled = true;
+            button.textContent = "Generating...";
+            output.value = "Generating content ideas...";
+            const prompt = `Generate 3-5 blog post titles and 3-5 social media post ideas for a company focused on a topic like: "${input}". The tone should be engaging and informative for potential customers in the awareness stage.`;
+            const response = await callGeminiAPI(prompt);
+            output.value = response;
+            button.disabled = false;
+            button.textContent = "Generate Ideas";
+        });
+
+        document.getElementById('generateConsiderationDifferentiator').addEventListener('click', async () => {
+            const input = document.getElementById('considerationInput').value;
+            const output = document.getElementById('considerationOutput');
+            const button = document.getElementById('generateConsiderationDifferentiator');
+            if (!input.trim()) {
+                output.value = "Please enter a competitor's strength or customer need.";
+                return;
+            }
+            button.disabled = true;
+            button.textContent = "Suggesting...";
+            output.value = "Suggesting differentiators...";
+            const prompt = `Given the statement: "${input}", suggest 3-5 ways a product/service can highlight its unique differentiators to a customer in the consideration stage. Focus on value proposition and competitive advantage.`;
+            const response = await callGeminiAPI(prompt);
+            output.value = response;
+            button.disabled = false;
+            button.textContent = "Suggest Differentiators";
+        });
+
+        document.getElementById('generatePurchaseCTA').addEventListener('click', async () => {
+            const input = document.getElementById('purchaseInput').value;
+            const output = document.getElementById('purchaseOutput');
+            const button = document.getElementById('generatePurchaseCTA');
+            if (!input.trim()) {
+                output.value = "Please enter product/service and goal (e.g., 'Product: X, Goal: Y').";
+                return;
+            }
+            button.disabled = true;
+            button.textContent = "Generating...";
+            output.value = "Generating CTA text...";
+            const prompt = `Generate 3-5 compelling Call-to-Action (CTA) phrases for the following scenario: "${input}". The CTAs should be concise, action-oriented, and designed to maximize conversion.`;
+            const response = await callGeminiAPI(prompt);
+            output.value = response;
+            button.disabled = false;
+            button.textContent = "Generate CTA";
+        });
+
+        document.getElementById('generateRetentionResponse').addEventListener('click', async () => {
+            const input = document.getElementById('retentionInput').value;
+            const output = document.getElementById('retentionOutput');
+            const button = document.getElementById('generateRetentionResponse');
+            if (!input.trim()) {
+                output.value = "Please describe the customer issue.";
+                return;
+            }
+            button.disabled = true;
+            button.textContent = "Generating...";
+            output.value = "Drafting support response...";
+            const prompt = `Draft a polite, empathetic, and helpful customer support response for the following issue: "${input}". The response should aim to resolve the issue or guide the customer to the next steps.`;
+            const response = await callGeminiAPI(prompt);
+            output.value = response;
+            button.disabled = false;
+            button.textContent = "Generate Response";
+        });
+
+        document.getElementById('generateAdvocacyResponse').addEventListener('click', async () => {
+            const input = document.getElementById('advocacyInput').value;
+            const output = document.getElementById('advocacyOutput');
+            const button = document.getElementById('generateAdvocacyResponse');
+            if (!input.trim()) {
+                output.value = "Please enter the customer review text.";
+                return;
+            }
+            button.disabled = true;
+            button.textContent = "Drafting...";
+            output.value = "Drafting review response...";
+            const prompt = `Draft a concise and appropriate public response to the following customer review: "${input}". If the review is positive, express gratitude. If negative, acknowledge the feedback and offer a solution or path to resolution.`;
+            const response = await callGeminiAPI(prompt);
+            output.value = response;
+            button.disabled = false;
+            button.textContent = "Draft Response";
+        });
+
+        let currentPillarIndex = 0;
+        const pillarSlides = document.querySelectorAll('.pillar-slide');
+        const pillarIndicatorsContainer = document.getElementById('pillarIndicators');
+        const prevButton = document.getElementById('prevPillar');
+        const nextButton = document.getElementById('nextPillar');
+
+        function updatePillarDisplay() {
+            pillarSlides.forEach((slide, index) => {
+                if (index === currentPillarIndex) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            prevButton.disabled = currentPillarIndex === 0;
+            nextButton.disabled = currentPillarIndex === pillarSlides.length - 1;
+
+            updatePillarIndicators();
+        }
+
+        function updatePillarIndicators() {
+            pillarIndicatorsContainer.innerHTML = '';
+            pillarSlides.forEach((_, index) => {
+                const indicator = document.createElement('button');
+                indicator.classList.add('w-3', 'h-3', 'rounded-full', 'transition-colors', 'duration-200');
+                indicator.classList.add(index === currentPillarIndex ? 'bg-[#00A1E4]' : 'bg-gray-400');
+                indicator.addEventListener('click', () => {
+                    currentPillarIndex = index;
+                    updatePillarDisplay();
+                });
+                pillarIndicatorsContainer.appendChild(indicator);
+            });
+        }
+
+        prevButton.addEventListener('click', () => {
+            if (currentPillarIndex > 0) {
+                currentPillarIndex--;
+                updatePillarDisplay();
+            }
+        });
+
+        nextButton.addEventListener('click', () => {
+            if (currentPillarIndex < pillarSlides.length - 1) {
+                currentPillarIndex++;
+                updatePillarDisplay();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            createAwarenessChart();
+            createConsiderationChart();
+            createRetentionChart();
+            createAdvocacyChart();
+            updatePillarDisplay();
+        });
+    </script>
+</body>
+</html>
+apps-fileview.texmex_20250626.00_p0
+CUSTOMERJOURNEY!DOCTYPE html.txt
+Displaying CUSTOMERJOURNEY!DOCTYPE html.txt.
